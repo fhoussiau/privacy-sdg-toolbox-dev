@@ -17,96 +17,114 @@ class Dataset(ABC):
     @abstractmethod
     def read(self, input_path):
         """
-        Read dataset and description file.
+        Read dataset from the input file(s).
 
         """
-        pass
 
     @abstractmethod
     def write(self, output_path):
         """
-        Write dataset and description to file.
+        Write dataset to file(s).
 
         """
-        pass
 
-    @abstractmethod
-    def read_from_string(self, data, schema):
-        """
-        Read from dataset and description as strings.
-        """
-        pass
+    # @abstractmethod
+    # def read_from_string(self, data, schema):
+    #     """
+    #     Read from dataset and description as strings.
+    #     """
+    #     pass
 
-    @abstractmethod
-    def write_to_string(self):
-        """
-        Write dataset to a string.
-        """
-        pass
+    # @abstractmethod
+    # def write_to_string(self):
+    #     """
+    #     Write dataset to a string.
+    #     """
+    #     pass
 
-    @abstractmethod
-    def sample(self, n_samples):
-        """
-        Sample from dataset a set of records.
-
-        """
-        pass
+    # All of the following only makes sense for records.
 
     @abstractmethod
-    def get_records(self, record_ids):
+    def sample(self, n_users):
         """
-        Select and return a record(s).
+        Sample from dataset the information about a set of users.
 
         """
-        pass
+
+    # @abstractmethod
+    # def get_records(self, record_ids):
+    #     """
+    #     Select and return a record(s).
+
+    #     """
+    #     pass
+
+    # @abstractmethod
+    # def drop_records(self, record_ids):
+    #     """
+    #     Drop a record(s) and return modified dataset.
+
+    #     """
+    #     pass
+
+    # @abstractmethod
+    # def add_records(self, records):
+    #     """
+    #     Add record(s) to dataset and return modified dataset.
+
+    #     """
+    #     pass
+
+    # @abstractmethod
+    # def replace(self, record_in, record_out):
+    #     """
+    #     Replace a row with a given row.
+
+    #     """
+    #     pass
+
+    # @abstractmethod
+    # def create_subsets(self, n, sample_size, drop_records=None):
+    #     """
+    #     Create a number of training datasets (sub-samples from main dataset)
+    #     of a given sample size and with the option to remove some records.
+
+    #     """
+    #     pass
 
     @abstractmethod
-    def drop_records(self, record_ids):
+    def copy(self):
         """
-        Drop a record(s) and return modified dataset.
+        Create a Dataset that is a deep copy of this one. In particular,
+        the underlying data is copied and can thus be modified freely.
+
+        Returns
+        -------
+        Dataset
+            A copy of this Dataset.
 
         """
-        pass
-
-    @abstractmethod
-    def add_records(self, records):
-        """
-        Add record(s) to dataset and return modified dataset.
-
-        """
-        pass
-
-    @abstractmethod
-    def replace(self, record_in, record_out):
-        """
-        Replace a row with a given row.
-
-        """
-        pass
-
-    @abstractmethod
-    def create_subsets(self, n, sample_size, drop_records=None):
-        """
-        Create a number of training datasets (sub-samples from main dataset)
-        of a given sample size and with the option to remove some records.
-
-        """
-        pass
 
     @abstractmethod
     def __add__(self, other):
         """
-        Adding two Dataset objects together.
+        Concatenate two Dataset objects together, as a larger dataset.
 
         """
-        pass
 
     @abstractmethod
     def __iter__(self):
         """
-        Returns an iterator over records in the dataset.
+        Returns an iterator over users in the dataset.
+
         """
-        pass
+
+    @abstractmethod
+    def __len__(self):
+        """
+        Returns the number of users in the dataset.
+
+        """
 
     @property
     def label(self):
@@ -149,7 +167,7 @@ class RecordSetDataset(Dataset):
 
     def sample(self, n_samples=1, frac=None, random_state=None):
         """
-        Sample a set of records from a Dataset object.
+        Sample a set of records from this dataset.
 
         Parameters
         ----------
@@ -178,7 +196,7 @@ class RecordSetDataset(Dataset):
 
     def get_records(self, record_ids):
         """
-        Get a record from the Dataset object
+        Get a record from this dataset.
 
         Parameters
         ----------
@@ -199,7 +217,7 @@ class RecordSetDataset(Dataset):
 
     def drop_records(self, record_ids=[], n=1, in_place=False):
         """
-        Drop records from the Dataset object, if record_ids is empty it will drop a random record.
+        Drop records from this dataset. If record_ids is empty, drop random records.
 
         Parameters
         ----------
@@ -238,7 +256,7 @@ class RecordSetDataset(Dataset):
 
     def add_records(self, records, in_place=False):
         """
-        Add record(s) to dataset and return modified dataset.
+        Add record(s) to this dataset and return a modified dataset.
 
         Parameters
         ----------
@@ -268,7 +286,7 @@ class RecordSetDataset(Dataset):
 
     def replace(self, records_in, records_out=[], in_place=False):
         """
-        Replace a record with another one in the dataset, if records_out is empty it will remove a random record.
+        Replace a record with another one in the dataset. If records_out is empty, remove a random record.
 
         Parameters
         ----------
@@ -346,7 +364,7 @@ class RecordSetDataset(Dataset):
         Returns
         -------
         Dataset
-            Empty tabular dataset.
+            Empty dataset.
 
         """
         return self.get_records([])

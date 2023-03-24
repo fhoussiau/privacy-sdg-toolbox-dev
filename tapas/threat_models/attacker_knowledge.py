@@ -78,6 +78,8 @@ class AttackerKnowledgeWithLabel(AttackerKnowledgeOnData):
         abstract
 
 
+# TODO: explain why this does not account for a specific user. (???)
+
 class AuxiliaryDataKnowledge(AttackerKnowledgeOnData):
     """
     This attacker knowledge assumes access to some auxiliary dataset from which
@@ -199,7 +201,7 @@ class AuxiliaryDataKnowledge(AttackerKnowledgeOnData):
 class ExactDataKnowledge(AttackerKnowledgeOnData):
     """
     Also called worst-case attack, this assumes that the attacker knows the
-    exact dataset used to generate 
+    exact dataset used to generate the synthetic data.
 
     """
 
@@ -452,6 +454,10 @@ class LabelInferenceThreatModel(TrainableThreatModel):
         use_memory = (not ignore_memory) and self.memorise_datasets
         if use_memory:
             mem_datasets, mem_labels = self._memory[training]
+            # If enough samples have been generated, restrict to the first num_samples records.
+            if num_samples <= len(mem_datasets):
+                mem_datasets = mem_datasets[:num_samples]
+                mem_labels = mem_labels[:num_samples]
             num_samples -= len(mem_datasets)
         else:
             mem_datasets = []

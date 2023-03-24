@@ -14,19 +14,19 @@ if TYPE_CHECKING:
     from ..datasets import Dataset, TUDataset
 
 from .shadow_modelling import ShadowModellingAttack
-from .set_classifiers import SetClassifier, FeatureBasedSetClassifier
+from .set_classifiers import SetClassifier, SetFeature, FeatureBasedSetClassifier
+
+import numpy as np
+import networkx as nx
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.base import ClassifierMixin
 from sklearn.svm import SVC
 
-import numpy as np
-import networkx as nx
 from grakel import WeisfeilerLehman, VertexHistogram
 from grakel.kernels import Kernel
 from grakel.utils import graph_from_networkx
-
-from .set_classifiers import SetClassifier, SetFeature
+ 
 
 
 # First, we implement a custom set classifier for datasets containing multiple

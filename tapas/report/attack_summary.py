@@ -220,7 +220,7 @@ class BinaryLabelInferenceAttackSummary(LabelInferenceAttackSummary):
         If self.scores is None, this returns max(tp/fp, (1-tp)/(1-fp)).
 
         For an analysis involving the statistical significance of this result,
-        use TODO report class.
+        use the EffectiveEpsilonReport report class.
 
         Returns
         -------
@@ -228,6 +228,8 @@ class BinaryLabelInferenceAttackSummary(LabelInferenceAttackSummary):
 
         """
         if self.scores is None:
+            if self.fp <= 0 or self.tp >= 1:
+                return np.inf
             return np.log(max(self.tp / self.fp, (1 - self.fp) / (1 - self.tp)))
         else:
             # Arbitrary threshold on the minimum count needed for TP/FP comp.
@@ -247,6 +249,11 @@ class BinaryLabelInferenceAttackSummary(LabelInferenceAttackSummary):
                 np.mean(self.scores[self.labels == 0] >= t)
                 for t in significant_thresholds
             ])
+            # Check that there is no threshold for which the attack has either no
+            # false positives, or no false negatives. If either is true, then the
+            # effective epsilon is infinite.
+            if (np.any(fp <= 0) and np.max(tp[fp <= 0]) > 0) or (np.any(tp >= 1) and np.min(fp[tp >= 1]) < 1):
+                return np.inf
             return np.log(max(np.max(tp/fp), np.max((1-fp)/(1-tp))))
 
     def get_metric_filename(self, postfix=""):
